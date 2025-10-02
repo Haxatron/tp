@@ -49,10 +49,10 @@ You can reach us at the email `e1297756@u.nus.edu`
 
 ### James Doe
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/haxatron.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](http://github.com/haxatron)]
+[[portfolio](team/haxatron.md)]
 
 * Role: Developer
 * Responsibilities: UI

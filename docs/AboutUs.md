@@ -18,15 +18,13 @@ You can reach us at the email `e1297756@u.nus.edu`
 
 * Role: Project member
 
-### Jane Doe
+### Zhang Haoxiang
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/chcischc.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](http://github.com/chcischc)]
 
-* Role: Team Lead
-* Responsibilities: UI
+* Role: Project member
 
 ### Johnny Doe
 

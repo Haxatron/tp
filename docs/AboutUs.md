@@ -9,14 +9,22 @@ You can reach us at the email `e1297756@u.nus.edu`
 
 ## TA Connect
 
+### Shen Jingtao
+
+<img src="images/davidshenjingtao.png" width="200px">
+
+[[github](https://github.com/DavidShenJingtao)]
+
+* Role: Developer, Coordinator
+* Responsibilities: Assign issues to teammates
+
 ### Yuan Yusi
 
 <img src="images/yyssophie.png" width="200px">
 
-[[homepage](http://www.comp.nus.edu.sg/~damithch)]
 [[github](https://github.com/yyssophie)]
 
-* Role: Project member
+* Role: Developer
 
 ### Zhang Haoxiang
 
@@ -24,33 +32,9 @@ You can reach us at the email `e1297756@u.nus.edu`
 
 [[github](http://github.com/chcischc)]
 
-* Role: Project member
-
-### Johnny Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
-
 * Role: Developer
-* Responsibilities: Data
 
-### Jean Doe
+### Truong Van Quoc Bao
 
-<img src="images/johndoe.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: Dev Ops + Threading
-
-### James Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: UI
+### Axel Jude Chong He Jun

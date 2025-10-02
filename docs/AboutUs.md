@@ -36,5 +36,16 @@ You can reach us at the email `e1297756@u.nus.edu`
 
 ### Truong Van Quoc Bao
 
+<img src="images/bjoozz.png" width="200px">
+
+[[github](https://github.com/BJoozz)]
+
+* Role: Developer
 
 ### Axel Jude Chong He Jun
+
+<img src="images/haxatron.png" width="200px">
+
+[[github](http://github.com/haxatron)]
+
+* Role: Developer

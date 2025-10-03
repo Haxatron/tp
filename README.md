@@ -20,6 +20,7 @@ This project is based on the AddressBook-Level3 project created by the [SE-EDU i
 - Delete a contact by index.
 - Find contacts by keyword (substring, case-insensitive).
 - List all contacts.
+- List all students in a specific session.
 
 ## Resources
 - [Original AddressBook Product Website](https://se-education.org/addressbook-level3)

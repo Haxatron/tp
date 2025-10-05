@@ -275,14 +275,14 @@ _{Explain here how the data archiving feature will be implemented}_
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
 | Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | tutor                                      | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | tutor                                      | add new _contacts_ | keep the contact list updated with _contact details_ and _session_ |
-| `* * *`  | tutor                                      | delete _contacts_ by _contact ID_ | remove _contacts_ from the contact list in case they have  |                                
-| `* * *`  | tutor                                      | search contact list by _name_ | locate details of _contacts_ by name without having to go through the entire list |
-| `* * *`  | tutor                                      | search contact list by _contact ID_ | locate details of _contacts_ by _contact ID_ without having to go through the entire list |
-| `* * *`  | tutor                                      | list all _contacts_ from the course | view all _contacts_ and their _contact details_ and _session_ in the contact list |
-| `* * *`  | tutor                                      | list all _contacts_ by _session_ | view all _contacts_ and their _contact details_ in particular session in the contact list |
+| ----- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
+| `* *` | tutor                                      | see usage instructions         | refer to instructions when I forget how to use the App                 |
+| `* * *` | tutor                                      | add new _contacts_ | keep the contact list updated with _contact details_ and _session_ |
+| `* * *` | tutor                                      | delete _contacts_ by _contact ID_ | remove _contacts_ from the contact list in case they have  |                                
+| `* * *` | tutor                                      | search contact list by _name_ | locate details of _contacts_ by name without having to go through the entire list |
+| `* *` | tutor                                      | search contact list by _contact ID_ | locate details of _contacts_ by _contact ID_ without having to go through the entire list |
+| `* *` | tutor                                      | list all _contacts_ from the course | view all _contacts_ and their _contact details_ and _session_ in the contact list |
+| `* * *` | tutor                                      | list all _contacts_ by _session_ | view all _contacts_ and their _contact details_ in particular session in the contact list |
 
 *{More to be added}*
 
@@ -290,36 +290,94 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 (For all use cases below, the **System** is the `TAConnect` program and the **Actor** is the `tutor`, unless specified otherwise)
 
-**Use case: List all contacts in the course**
+**Use case: UC1 - Add a new contact in the contact list**
 
 **MSS**
-
-1.  Tutor requests to list all users as well as their _contact details_ and _session_ for the particular course
-2.  TAConnect shows a list of all users as well as their _contact details_ and _session_ for the particular course
+1.  Tutor enters `add command` including details of a contact.
+2.  TAConnect parses the command input.
+3.  TAConnect validates that the command is correctly formatted and all required fields are correctly updated.
+4.  TAConnect adds the new contact in the contact list.
+5.  TAConnect saves the updated contact list to the local data file.
+6.  TAConnect displays a success message showing details of the new contact.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+3a. TAConnect detects an error in the command (invalid type or incorrect format).
+  * 3a1. TAConnect shows an error message specifying the issue and correct format.
+  * 3a2. Tutor re-enters the command.
+
+    Steps 3a1-3a2 are repeated until the type entered is correct.
+
+    Use case resumes from step 4.
+
+4a. TAConnect finds that the added contact already exists in the contact list.
+  * 4a1. TAConnect rejects the duplicate entry.
+  * 4a2. TAConnect shows an error message indicating that the added contact already exists.
+    
+    Use case ends.
+
+5a. Storage operation fails due to I/O error.
+  * 5a1. TAConnect displays an error message indicating that data could not be saved.
+
+    Use case ends.
+
+5b. Storage file is corrupted.
+  * 5b1. TAConnect shows an error message indicating that the data file is corrupted.
+  * 5b2. TAConnect attempts to back up or recreate the storage file.
+  * Use case resumes from step 5 if recovery succeeds; otherwise, use case ends.
+
+**Use case: UC2 - Delete a contact in the contact list**
+
+**Use case: UC3 - Search contacts in the list by name**
+
+**Use case: UC4 - List all contacts in the course**
+
+**MSS**
+
+1.  Tutor requests to list all users as well as their _contact types_ and _session_ for the particular course
+2.  TAConnect shows a list of all users as well as their _contact types_ and _session_ for the particular course
+
+    Use case ends.
+
+**Extensions**
+
+2a. The list is empty.
 
   Use case ends.
 
+**Use case: UC5 - List all student contacts in a specific session**
+
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
-2.  Should be able to handle up to 2500 users and 250 sessions without a noticeable sluggishness in performance for typical usage.
-3.  A tutor with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+**Performance requirements**
+1. Should execute core commands (i.e. `add`, `delete`, `find`) within 1 second under usual conditions.
+2. Should be able to handle up to 2500 users and 250 sessions without a noticeable sluggishness in performance for typical usage.
+3. Should automatically save after each successful modification command (i.e. `add`, `delete`) without affecting UI responsiveness.
 
+**Usability requirements**
+1. A tutor with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+2. A new user should be able to learn and perform basic commands within 10 minutes under the help of user guide.
+3. The user interface should provide consistent layout and feedback messages across all _mainstream OSes_.
 
-*{More to be added}*
+**Scalability requirements**
+1. The internal data structures (contact list) should efficiently support search and retrieval operations in O(n) time complexity.
+2. Should allow easy addition of new commands without modifying existing core logic.
+
+**Other requirements**
+1. Should work on any _mainstream OS_ as long as it has Java `17` installed.
+2. All unit and integration tests should pass before release, maintaining at least 90% test coverage.
 
 ### Glossary
 
 * **Contact ID**: For students or tutors who are not full-time employees of NUS this is their matriculation number (eg. A01234567X). For tutors or instructors who are full-time employees of NUS, the TAConnect program will assign a contact ID with the format `FTE-{INITIALS}`, so a NUS full-time employee that has a name Betsy Crowe will have the contact ID `FTE-BC`. If multiple contacts have the same initials we will append a number, representing the number of times this initial has been used, in front, so if the contact ID `FTE-BC` already exists and another NUS full-time employee that has a name Bob Charlie is added, the contact ID will be `FTE-BC2`.
-* **Contacts**: The user's name, _contact ID_, email and optionally a Telegram handle.
-* **Contact Detail**: students, tutors, course instructors
-* **Mainstream OS**: Windows, Linux, Unix, MacOS
+* **Contact**: The user's name, _contact ID_, email and optionally a Telegram handle.
+* **Contact Type**: The category of a contact, i.e. student, tutor, course instructor, staff
+* **Mainstream OS**: Windows, Linux, Unix, Mac
+* **Session**: A period of lab or tutorial during which tutor is responsible for delivering the class.
+* **Tutor**: Teaching assistant in a NUS CS-coded course
+* **UI (User interface)**: The visual and interactive components of TAConnect through which users issue commands and receive responses.
 
 --------------------------------------------------------------------------------------------------------------------
 

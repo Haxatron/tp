@@ -34,7 +34,7 @@ public class SessionTest {
         assertFalse(Session.isValidSession("G1A")); // letter after digit
 
         // valid sessions
-        assertTrue(Session.isValidSession("G1"));  // single digit
+        assertTrue(Session.isValidSession("G1")); // single digit
         assertTrue(Session.isValidSession("F7"));
         assertTrue(Session.isValidSession("E12"));
         assertTrue(Session.isValidSession("Z99"));

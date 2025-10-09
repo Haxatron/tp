@@ -449,7 +449,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **Other requirements**
 1. Should work on any _mainstream OS_ as long as it has Java `17` installed.
-2. All unit and integration tests should pass before release, maintaining at least 90% test coverage.
+2. All unit and integration tests should pass before release, maintaining at least 75% test coverage.
 
 ### Glossary
 

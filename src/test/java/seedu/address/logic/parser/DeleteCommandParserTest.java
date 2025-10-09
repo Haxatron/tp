@@ -11,6 +11,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.DeleteCommand.Selector;
+import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
+import seedu.address.testutil.TypicalPersons;
 
 /**
  * As we are only doing white-box testing, our test cases do not cover path variations
@@ -24,18 +28,60 @@ public class DeleteCommandParserTest {
     private DeleteCommandParser parser = new DeleteCommandParser();
 
     @Test
-    public void parse_validArgs_returnsDeleteCommand() {
-        assertParseSuccess(parser, "1", new DeleteCommand(List.of(INDEX_FIRST_PERSON)));
+    public void parse_validIndexArgs_returnsDeleteCommand() {
+        assertParseSuccess(parser, " 1", new DeleteCommand(List.of(Selector.fromIndex(INDEX_FIRST_PERSON))));
     }
 
     @Test
-    public void parse_multipleValidArgs_returnsDeleteCommand() {
-        assertParseSuccess(parser, "1 2", new DeleteCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON)));
+    public void parse_multipleValidIndexArgs_returnsDeleteCommand() {
+        assertParseSuccess(parser, " 1 2", new DeleteCommand(List.of(
+                Selector.fromIndex(INDEX_FIRST_PERSON), Selector.fromIndex(INDEX_SECOND_PERSON))));
     }
 
     @Test
-    public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, "a", String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
+    public void parse_validNameArg_returnsDeleteCommand() {
+        Person alice = TypicalPersons.ALICE;
+        String input = " n/" + alice.getName();
+
+        assertParseSuccess(parser, input, new DeleteCommand(List.of(Selector.fromName(alice.getName()))));
+    }
+
+    @Test
+    public void parse_multiWordNameArg_returnsDeleteCommand() {
+        Person custom = new PersonBuilder().withName("Alice Tan").build();
+        String input = " n/" + custom.getName();
+
+        assertParseSuccess(parser, input, new DeleteCommand(List.of(Selector.fromName(custom.getName()))));
+    }
+
+    @Test
+    public void parse_multipleNameArgs_returnsDeleteCommand() {
+        Person alice = TypicalPersons.ALICE;
+        Person benson = TypicalPersons.BENSON;
+        String input = " n/" + alice.getName() + " n/" + benson.getName();
+
+        assertParseSuccess(parser, input, new DeleteCommand(List.of(
+                Selector.fromName(alice.getName()), Selector.fromName(benson.getName()))));
+    }
+
+    @Test
+    public void parse_mixedSelectors_returnsDeleteCommand() {
+        Person alice = TypicalPersons.ALICE;
+        String input = " 1 n/" + alice.getName();
+
+        assertParseSuccess(parser, input, new DeleteCommand(List.of(
+                Selector.fromIndex(INDEX_FIRST_PERSON), Selector.fromName(alice.getName()))));
+    }
+
+    @Test
+    public void parse_invalidIndex_throwsParseException() {
+        assertParseFailure(parser, " a", String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_emptyName_throwsParseException() {
+        assertParseFailure(parser, " n/   ",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
     }
 
     @Test

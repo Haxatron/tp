@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 
 /**
@@ -24,29 +26,31 @@ public class DeleteCommand extends Command {
     public static final String COMMAND_WORD = "delete";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Deletes one or more persons identified by the index numbers used in the displayed person list.\n"
-            + "Parameters: INDEX [MORE_INDEXES] (must be positive integers)\n"
+            + ": Deletes one or more persons identified by displayed index or exact name.\n"
+            + "Parameters: INDEX [MORE_INDEXES] (positive integers) [n/NAME] [n/MORE_NAMES]\n"
             + "Examples:\n"
             + COMMAND_WORD + " 1\n"
-            + COMMAND_WORD + " 1 3";
+            + COMMAND_WORD + " 1 3\n"
+            + COMMAND_WORD + " n/Alice Tan";
 
     public static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
     public static final String MESSAGE_DELETE_MULTIPLE_PERSON_SUCCESS = "Deleted Persons:\n%1$s";
+    public static final String MESSAGE_PERSON_NOT_FOUND_BY_NAME = "No person with the name: %1$s";
 
-    private final List<Index> targetIndexes;
+    private final List<Selector> selectors;
 
     /**
-     * Creates a {@code DeleteCommand} targeting the given indexes.
+     * Creates a {@code DeleteCommand} targeting the given selectors.
      *
-     * @param targetIndexes displayed indexes of persons to remove.
-     * @throws IllegalArgumentException if {@code targetIndexes} is empty.
+     * @param selectors selectors describing persons to remove.
+     * @throws IllegalArgumentException if {@code selectors} is empty.
      */
-    public DeleteCommand(List<Index> targetIndexes) {
-        requireNonNull(targetIndexes);
-        if (targetIndexes.isEmpty()) {
-            throw new IllegalArgumentException("targetIndexes cannot be empty");
+    public DeleteCommand(List<Selector> selectors) {
+        requireNonNull(selectors);
+        if (selectors.isEmpty()) {
+            throw new IllegalArgumentException("selectors cannot be empty");
         }
-        this.targetIndexes = List.copyOf(targetIndexes);
+        this.selectors = List.copyOf(selectors);
     }
 
     @Override
@@ -55,8 +59,13 @@ public class DeleteCommand extends Command {
         List<Person> lastShownList = model.getFilteredPersonList();
 
         List<Person> personsToDelete = new ArrayList<>();
-        for (Index targetIndex : targetIndexes) {
-            personsToDelete.add(mapIndexToPerson(targetIndex, lastShownList));
+        for (Selector selector : selectors) {
+            if (selector.isIndex()) {
+                personsToDelete.add(mapIndexToPerson(selector.getIndex(), lastShownList));
+                continue;
+            }
+
+            personsToDelete.addAll(mapNameToPersons(selector.getName(), lastShownList));
         }
 
         Set<Person> uniquePersonsToDelete = new LinkedHashSet<>(personsToDelete);
@@ -76,13 +85,13 @@ public class DeleteCommand extends Command {
         }
 
         DeleteCommand otherDeleteCommand = (DeleteCommand) other;
-        return targetIndexes.equals(otherDeleteCommand.targetIndexes);
+        return selectors.equals(otherDeleteCommand.selectors);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndexes", targetIndexes)
+                .add("selectors", selectors)
                 .toString();
     }
 
@@ -91,6 +100,18 @@ public class DeleteCommand extends Command {
             throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
         }
         return lastShownList.get(targetIndex.getZeroBased());
+    }
+
+    private Collection<Person> mapNameToPersons(Name name, List<Person> lastShownList) throws CommandException {
+        List<Person> matchedPersons = lastShownList.stream()
+                .filter(person -> person.getName().equals(name))
+                .collect(Collectors.toList());
+
+        if (matchedPersons.isEmpty()) {
+            throw new CommandException(String.format(MESSAGE_PERSON_NOT_FOUND_BY_NAME, name));
+        }
+
+        return matchedPersons;
     }
 
     private String buildSuccessMessage(Collection<Person> personsToDelete) {
@@ -104,5 +125,74 @@ public class DeleteCommand extends Command {
                 .collect(Collectors.joining("\n"));
 
         return String.format(MESSAGE_DELETE_MULTIPLE_PERSON_SUCCESS, deletedPersons);
+    }
+
+    /**
+     * Represents a selector used to identify persons targeted by {@code DeleteCommand}.
+     */
+    public static class Selector {
+        private final Index index;
+        private final Name name;
+
+        private Selector(Index index, Name name) {
+            this.index = index;
+            this.name = name;
+        }
+
+        /**
+         * Creates an index selector.
+         */
+        public static Selector fromIndex(Index index) {
+            requireNonNull(index);
+            return new Selector(index, null);
+        }
+
+        /**
+         * Creates a case-sensitive name selector.
+         */
+        public static Selector fromName(Name name) {
+            requireNonNull(name);
+            return new Selector(null, name);
+        }
+
+        public boolean isIndex() {
+            return index != null;
+        }
+
+        public Index getIndex() {
+            return index;
+        }
+
+        public Name getName() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+
+            if (!(other instanceof Selector)) {
+                return false;
+            }
+
+            Selector otherSelector = (Selector) other;
+            return Objects.equals(index, otherSelector.index)
+                    && Objects.equals(name, otherSelector.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(index, name);
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .add("index", index)
+                    .add("name", name)
+                    .toString();
+        }
     }
 }

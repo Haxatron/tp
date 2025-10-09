@@ -123,6 +123,38 @@ public class StringUtilTest {
         assertTrue(StringUtil.containsWordIgnoreCase("AAA bBb ccc  bbb", "bbB"));
     }
 
+    //---------------- Tests for containsSubstringIgnoreCase --------------------------------------
+
+    @Test
+    public void containsSubstringIgnoreCase_nullSubstring_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                StringUtil.containsSubstringIgnoreCase("typical sentence", null));
+    }
+
+    @Test
+    public void containsSubstringIgnoreCase_nullSentence_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> StringUtil.containsSubstringIgnoreCase(null, "abc"));
+    }
+
+    @Test
+    public void containsSubstringIgnoreCase_emptySubstring_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, "Substring parameter cannot be empty", ()
+            -> StringUtil.containsSubstringIgnoreCase("typical sentence", "   "));
+    }
+
+    @Test
+    public void containsSubstringIgnoreCase_validInputs_correctResult() {
+        assertFalse(StringUtil.containsSubstringIgnoreCase("", "abc"));
+        assertFalse(StringUtil.containsSubstringIgnoreCase("    ", "abc"));
+        assertFalse(StringUtil.containsSubstringIgnoreCase("alphabet soup", "beta"));
+        assertFalse(StringUtil.containsSubstringIgnoreCase("bbb", "bbbb"));
+
+        assertTrue(StringUtil.containsSubstringIgnoreCase("alphabet soup", "ALPHA"));
+        assertTrue(StringUtil.containsSubstringIgnoreCase(" alphabet soup ", "  SoUp"));
+        assertTrue(StringUtil.containsSubstringIgnoreCase("A.B-C'D", "b-c"));
+        assertTrue(StringUtil.containsSubstringIgnoreCase("12345", "234"));
+    }
+
     //---------------- Tests for getDetails --------------------------------------
 
     /*

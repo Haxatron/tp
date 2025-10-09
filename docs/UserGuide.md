@@ -132,15 +132,18 @@ Examples:
 
 Deletes the specified person from the address book.
 
-Format: `delete INDEX [MORE_INDEXES]`
+Format: `delete INDEX [MORE_INDEXES] [n/NAME] [n/MORE_NAMES]`
 
-* Deletes each person at the specified `INDEX` values.
+* Deletes each person at the specified `INDEX` values or with the exact `NAME` provided.
 * The indexes refer to the numbers shown in the displayed person list.
 * Every index **must be a positive integer** 1, 2, 3, …​
+* Names are case-sensitive and must match the contact name exactly, including spaces.
 
 Examples:
 * `list` followed by `delete 2` deletes the 2nd person in the address book.
 * `list` followed by `delete 1 3` deletes both the 1st and 3rd persons in the currently displayed list.
+* `delete n/Alice Tan` deletes the contact whose name is exactly `Alice Tan`.
+* `list` followed by `delete 1 n/Alice Tan` deletes the 1st person in the list and the contact named `Alice Tan`.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
 
 ### Clearing all entries : `clear`

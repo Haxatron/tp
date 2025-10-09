@@ -35,6 +35,12 @@ public class DeleteCommand extends Command {
 
     private final List<Index> targetIndexes;
 
+    /**
+     * Creates a {@code DeleteCommand} targeting the given indexes.
+     *
+     * @param targetIndexes displayed indexes of persons to remove.
+     * @throws IllegalArgumentException if {@code targetIndexes} is empty.
+     */
     public DeleteCommand(List<Index> targetIndexes) {
         requireNonNull(targetIndexes);
         if (targetIndexes.isEmpty()) {

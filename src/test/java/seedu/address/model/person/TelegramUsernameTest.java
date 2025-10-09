@@ -45,6 +45,9 @@ public class TelegramUsernameTest {
         // same values -> returns true
         assertTrue(telegramUsername.equals(new TelegramUsername("@TestUser")));
 
+        // same object -> returns true
+        assertTrue(telegramUsername.equals(telegramUsername));
+
         // null -> returns false
         assertFalse(telegramUsername.equals(null));
 

@@ -57,4 +57,22 @@ public class TypeTest {
         // different values -> returns false
         assertFalse(type.equals(new Type("ta")));
     }
+
+    @Test
+    public void isType() {
+        Type type1 = new Type("student");
+        Type type2 = new Type("ta");
+        Type type3 = new Type("instructor");
+        Type type4 = new Type("staff");
+
+        assertTrue(type1.isStudent());
+        assertTrue(type2.isTa());
+        assertTrue(type3.isInstructor());
+        assertTrue(type4.isStaff());
+
+        assertFalse(type1.isInstructor());
+        assertFalse(type2.isStudent());
+        assertFalse(type3.isStaff());
+        assertFalse(type4.isTa());
+    }
 }

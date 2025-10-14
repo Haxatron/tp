@@ -1,16 +1,14 @@
 package seedu.address.testutil;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
-import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.person.Session;
+import seedu.address.model.person.TelegramUsername;
+import seedu.address.model.person.Type;
 
 /**
  * A utility class to help with building EditPersonDescriptor objects.
@@ -35,8 +33,9 @@ public class EditPersonDescriptorBuilder {
         descriptor.setName(person.getName());
         descriptor.setPhone(person.getPhone());
         descriptor.setEmail(person.getEmail());
-        descriptor.setAddress(person.getAddress());
-        descriptor.setTags(person.getTags());
+        descriptor.setType(person.getType());
+        person.getTelegramUsername().ifPresent(descriptor::setTelegramUsername);
+        person.getSession().ifPresent(descriptor::setSession);
     }
 
     /**
@@ -64,20 +63,26 @@ public class EditPersonDescriptorBuilder {
     }
 
     /**
-     * Sets the {@code Address} of the {@code EditPersonDescriptor} that we are building.
+     * Sets the {@code Type} of the {@code EditPersonDescriptor} that we are building.
      */
-    public EditPersonDescriptorBuilder withAddress(String address) {
-        descriptor.setAddress(new Address(address));
+    public EditPersonDescriptorBuilder withType(String type) {
+        descriptor.setType(new Type(type));
         return this;
     }
 
     /**
-     * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code EditPersonDescriptor}
-     * that we are building.
+     * Sets the {@code TelegramUsername} of the {@code EditPersonDescriptor} that we are building.
      */
-    public EditPersonDescriptorBuilder withTags(String... tags) {
-        Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
-        descriptor.setTags(tagSet);
+    public EditPersonDescriptorBuilder withTelegram(String telegramUsername) {
+        descriptor.setTelegramUsername(new TelegramUsername(telegramUsername));
+        return this;
+    }
+
+    /**
+     * Sets the {@code Session} of the {@code EditPersonDescriptor} that we are building.
+     */
+    public EditPersonDescriptorBuilder withSession(String session) {
+        descriptor.setSession(new Session(session));
         return this;
     }
 

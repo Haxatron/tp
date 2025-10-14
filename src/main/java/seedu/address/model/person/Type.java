@@ -57,4 +57,32 @@ public class Type {
     public int hashCode() {
         return value.hashCode();
     }
+
+    /**
+     * Returns true if the type is student.
+     */
+    public boolean isStudent() {
+        return value.equals("student");
+    }
+
+    /**
+     * Returns true if the type is ta.
+     */
+    public boolean isTa() {
+        return value.equals("ta");
+    }
+
+    /**
+     * Returns true if the type is instructor.
+     */
+    public boolean isInstructor() {
+        return value.equals("instructor");
+    }
+
+    /**
+     * Returns true if the type is staff.
+     */
+    public boolean isStaff() {
+        return value.equals("staff");
+    }
 }

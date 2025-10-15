@@ -2,13 +2,10 @@ package seedu.address.model.person;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.model.tag.Tag;
 
 /**
  * Represents a Person in the address book.
@@ -16,25 +13,61 @@ import seedu.address.model.tag.Tag;
  */
 public class Person {
 
+    public static final String MESSAGE_INSTRUCTOR_STAFF = "Instructors and staff should not have a session.";
+    public static final String MESSAGE_STUDENT_TA = "Students and TAs must have a session assigned.";
+
     // Identity fields
     private final Name name;
     private final Phone phone;
     private final Email email;
 
     // Data fields
-    private final Address address;
-    private final Set<Tag> tags = new HashSet<>();
+    private final Optional<TelegramUsername> telegramUsername; // optional
+    private final Type type;
+    private final Optional<Session> session; // present only if student or ta
 
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Person(Name name, Phone phone, Email email, Type type,
+                  TelegramUsername telegramUsername, Session session) {
+        requireAllNonNull(name, phone, email, type);
         this.name = name;
         this.phone = phone;
         this.email = email;
-        this.address = address;
-        this.tags.addAll(tags);
+        this.telegramUsername = Optional.ofNullable(telegramUsername);
+        this.type = type;
+        this.session = Optional.ofNullable(session);
+
+        // Validation: enforce session presence rules
+        if ((type.isStudent() || type.isTa()) && this.session.isEmpty()) {
+            throw new IllegalArgumentException(MESSAGE_STUDENT_TA);
+        }
+
+        if ((type.isInstructor() || type.isStaff()) && this.session.isPresent()) {
+            throw new IllegalArgumentException(MESSAGE_INSTRUCTOR_STAFF);
+        }
+    }
+
+    /**
+     * Overloaded constructor for students or ta without telegramUsername.
+     */
+    public Person(Name name, Phone phone, Email email, Type type, Session session) {
+        this(name, phone, email, type, null, session);
+    }
+
+    /**
+     * Overloaded constructor for instructors or staff with telegramUsername.
+     */
+    public Person(Name name, Phone phone, Email email, Type type, TelegramUsername telegramUsername) {
+        this(name, phone, email, type, telegramUsername, null);
+    }
+
+    /**
+     * Overloaded constructor for instructors or staff without telegramUsername.
+     */
+    public Person(Name name, Phone phone, Email email, Type type) {
+        this(name, phone, email, type, null, null);
     }
 
     public Name getName() {
@@ -49,16 +82,16 @@ public class Person {
         return email;
     }
 
-    public Address getAddress() {
-        return address;
+    public Optional<TelegramUsername> getTelegramUsername() {
+        return telegramUsername;
     }
 
-    /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
-     * if modification is attempted.
-     */
-    public Set<Tag> getTags() {
-        return Collections.unmodifiableSet(tags);
+    public Optional<Session> getSession() {
+        return session;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     /**
@@ -93,25 +126,27 @@ public class Person {
         return name.equals(otherPerson.name)
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
-                && address.equals(otherPerson.address)
-                && tags.equals(otherPerson.tags);
+                && telegramUsername.equals(otherPerson.telegramUsername)
+                && session.equals(otherPerson.session)
+                && type.equals(otherPerson.type);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags);
+        return Objects.hash(name, phone, email, telegramUsername, type, session);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        ToStringBuilder builder = new ToStringBuilder(this)
                 .add("name", name)
                 .add("phone", phone)
                 .add("email", email)
-                .add("address", address)
-                .add("tags", tags)
-                .toString();
+                .add("type", type);
+        telegramUsername.ifPresent(t -> builder.add("telegramUsername", t));
+        session.ifPresent(s -> builder.add("session", s));
+        return builder.toString();
     }
 
 }

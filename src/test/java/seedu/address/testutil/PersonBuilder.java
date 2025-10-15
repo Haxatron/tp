@@ -1,15 +1,14 @@
 package seedu.address.testutil;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
-import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
-import seedu.address.model.tag.Tag;
-import seedu.address.model.util.SampleDataUtil;
+import seedu.address.model.person.Session;
+import seedu.address.model.person.TelegramUsername;
+import seedu.address.model.person.Type;
 
 /**
  * A utility class to help with building Person objects.
@@ -19,13 +18,16 @@ public class PersonBuilder {
     public static final String DEFAULT_NAME = "Amy Bee";
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
-    public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final String DEFAULT_TYPE = "student";
+    public static final String DEFAULT_TELEGRAM = "@amybee";
+    public static final String DEFAULT_SESSION = "G1";
 
     private Name name;
     private Phone phone;
     private Email email;
-    private Address address;
-    private Set<Tag> tags;
+    private Type type;
+    private Optional<TelegramUsername> telegramUsername;
+    private Optional<Session> session;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -34,8 +36,9 @@ public class PersonBuilder {
         name = new Name(DEFAULT_NAME);
         phone = new Phone(DEFAULT_PHONE);
         email = new Email(DEFAULT_EMAIL);
-        address = new Address(DEFAULT_ADDRESS);
-        tags = new HashSet<>();
+        type = new Type(DEFAULT_TYPE);
+        telegramUsername = Optional.ofNullable(new TelegramUsername(DEFAULT_TELEGRAM));
+        session = Optional.ofNullable(new Session(DEFAULT_SESSION));
     }
 
     /**
@@ -45,8 +48,9 @@ public class PersonBuilder {
         name = personToCopy.getName();
         phone = personToCopy.getPhone();
         email = personToCopy.getEmail();
-        address = personToCopy.getAddress();
-        tags = new HashSet<>(personToCopy.getTags());
+        type = personToCopy.getType();
+        telegramUsername = personToCopy.getTelegramUsername();
+        session = personToCopy.getSession();
     }
 
     /**
@@ -54,22 +58,6 @@ public class PersonBuilder {
      */
     public PersonBuilder withName(String name) {
         this.name = new Name(name);
-        return this;
-    }
-
-    /**
-     * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code Person} that we are building.
-     */
-    public PersonBuilder withTags(String ... tags) {
-        this.tags = SampleDataUtil.getTagSet(tags);
-        return this;
-    }
-
-    /**
-     * Sets the {@code Address} of the {@code Person} that we are building.
-     */
-    public PersonBuilder withAddress(String address) {
-        this.address = new Address(address);
         return this;
     }
 
@@ -89,8 +77,51 @@ public class PersonBuilder {
         return this;
     }
 
+    /**
+     * Sets the {@code Type} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withType(String type) {
+        this.type = new Type(type);
+        return this;
+    }
+
+    /**
+     * Sets the {@code Telegram} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withTelegram(String telegram) {
+        if (telegram == null || telegram.isBlank()) {
+            this.telegramUsername = Optional.empty();
+        } else {
+            this.telegramUsername = Optional.of(new TelegramUsername(telegram));
+        }
+        return this;
+    }
+
+    /**
+     * Sets the {@code Session} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withSession(String session) {
+        if (session == null || session.isBlank()) {
+            this.session = Optional.empty();
+        } else {
+            this.session = Optional.of(new Session(session));
+        }
+        return this;
+    }
+
+    /**
+     * Builds a Person based on type/session constraints.
+     */
     public Person build() {
-        return new Person(name, phone, email, address, tags);
+        // Handle constraints according to Person.java rules
+        if (type.isStudent() || type.isTa()) {
+            return new Person(name, phone, email, type, telegramUsername.orElse(null),
+                    session.orElseThrow(() -> new IllegalArgumentException(Person.MESSAGE_STUDENT_TA)));
+        } else {
+            // Instructors and staff cannot have sessions
+            return new Person(name, phone, email, type,
+                    telegramUsername.orElse(null), null);
+        }
     }
 
 }
